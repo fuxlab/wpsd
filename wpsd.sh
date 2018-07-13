@@ -18,7 +18,8 @@ if [[ "$@" == "setup" ]]; then
 
   docker network create webproxy
 
-  echo "WPSD: finished."
+  echo "WPSD: setup finished."
+  echo "WPSD: remember to change variables .env files in _lib/proxy & _lib/wp."
   exit 1
 fi
 
@@ -55,9 +56,10 @@ elif [[ "$@" == "stop" ]]; then
   echo "WPSD: proxy stopped"
   
   cd ../..
-  
   cd _lib/wp && docker-compose stop
   echo "WPSD: wordpress stopped"
+
+  echo "WPSD: stopped."
 else
   echo "WPSD: Please give me some params to do something. Try 'setup', 'start' or 'stop'."
 fi
