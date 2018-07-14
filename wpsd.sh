@@ -43,13 +43,14 @@ fi
 if [[ "$@" == "start" ]]; then
   echo "WPSD: starting.."
 
-  cd _lib/wp && docker-compose up -d
-  echo "WPSD: wordpress started"
+  cd _lib/proxy && docker-compose up -d
+  echo "WPSD: proxy started."
 
   cd ../..
 
-  cd _lib/proxy && docker-compose up -d
-  echo "WPSD: proxy started."
+  cd _lib/wp && docker-compose up -d
+  echo "WPSD: wordpress started"
+
   echo "WPSD: started."
 elif [[ "$@" == "stop" ]]; then
   cd _lib/proxy && docker-compose stop
