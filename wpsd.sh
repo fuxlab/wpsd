@@ -5,6 +5,10 @@ wp_env="./_lib/wp/.env"
 
 if [[ "$@" == "setup" ]]; then
   echo "WPSD: Run Setup.."
+
+  curl https://raw.githubusercontent.com/jwilder/nginx-proxy/master/nginx.tmpl > nginx/nginx.tmpl
+
+  docker-compose pull
   
   if [ ! -f "$proxy_env" ]; then
     cp "$proxy_env.sample" "$proxy_env"
@@ -64,5 +68,3 @@ elif [[ "$@" == "stop" ]]; then
 else
   echo "WPSD: Please give me some params to do something. Try 'setup', 'start' or 'stop'."
 fi
-
-
