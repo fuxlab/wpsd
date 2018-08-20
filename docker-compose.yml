@@ -1,9 +1,49 @@
 version: '3'
 services:
+
+
+  ####################################
+  ##           WORDPRESS            ##
+  ####################################
+  db:
+    container_name: ${CONTAINER_DB_NAME}
+    image: mariadb:latest
+    restart: unless-stopped
+    volumes:
+      - ${DB_PATH}:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+  wordpress:
+    depends_on:
+      - db
+    container_name: ${CONTAINER_WP_NAME}
+    image: wordpress:latest
+    restart: unless-stopped
+    volumes:
+      - ${WP_CONTENT}:/var/www/html/wp/wp-content
+      - ./php/uploadsize.ini:/usr/local/etc/php/conf.d/uploadsize.ini
+    environment:
+      WORDPRESS_DB_HOST: ${CONTAINER_DB_NAME}:3306
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
+      VIRTUAL_HOST: ${DOMAINS}
+      LETSENCRYPT_HOST: ${DOMAINS}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL} 
+
+ 
+  ####################################
+  ##             PROXY              ##
+  ####################################
   nginx-web:
     image: nginx
     labels:
-        com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
     container_name: ${NGINX_WEB:-nginx-web}
     restart: always
     ports:
@@ -32,7 +72,7 @@ services:
       - ${NGINX_FILES_PATH:-./data}/certs:/etc/nginx/certs:ro
       - ${NGINX_FILES_PATH:-./data}/htpasswd:/etc/nginx/htpasswd:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl:ro
+      - ${NGINX_FILES_PATH:-./data}/nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl:ro
     logging:
       options:
         max-size: ${NGINX_GEN_LOG_MAX_SIZE:-2m}
