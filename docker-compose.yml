@@ -59,6 +59,8 @@ services:
       options:
         max-size: ${NGINX_WEB_LOG_MAX_SIZE:-4m}
         max-file: ${NGINX_WEB_LOG_MAX_FILE:-10}
+    environment:
+      HTTPS_METHOD: noredirect
 
   nginx-gen:
     image: jwilder/docker-gen
