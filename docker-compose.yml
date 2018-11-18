@@ -36,6 +36,8 @@ services:
       VIRTUAL_HOST: ${DOMAINS}
       LETSENCRYPT_HOST: ${DOMAINS}
       LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL} 
+      HTTPS_METHOD: noredirect
+      DEFAULT_HOST: ${DEFAULT_HOST}
 
   ####################################
   ##             PROXY              ##
@@ -59,6 +61,9 @@ services:
       options:
         max-size: ${NGINX_WEB_LOG_MAX_SIZE:-4m}
         max-file: ${NGINX_WEB_LOG_MAX_FILE:-10}
+    environment:
+      HTTPS_METHOD: noredirect
+      DEFAULT_HOST: ${DEFAULT_HOST}
 
   nginx-gen:
     image: jwilder/docker-gen
@@ -77,6 +82,9 @@ services:
       options:
         max-size: ${NGINX_GEN_LOG_MAX_SIZE:-2m}
         max-file: ${NGINX_GEN_LOG_MAX_FILE:-10}
+    environment:
+      HTTPS_METHOD: noredirect
+      DEFAULT_HOST: ${DEFAULT_HOST}
 
   nginx-letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
@@ -91,6 +99,8 @@ services:
     environment:
       NGINX_DOCKER_GEN_CONTAINER: ${DOCKER_GEN:-nginx-gen}
       NGINX_PROXY_CONTAINER: ${NGINX_WEB:-nginx-web}
+      HTTPS_METHOD: noredirect
+      DEFAULT_HOST: ${DEFAULT_HOST}
     logging:
       options:
         max-size: ${NGINX_LETSENCRYPT_LOG_MAX_SIZE:-2m}
